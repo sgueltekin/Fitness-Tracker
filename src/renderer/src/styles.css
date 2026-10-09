@@ -1,0 +1,143 @@
+@import 'tailwindcss';
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
+@import '@fontsource/barlow/700.css';
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
+/*
+  Design tokens. The UI chrome is neutral; colour is reserved for data.
+  Category and ramp colours were validated for colour-blind separation in both
+  modes in the order walkrun, easy, tempo, intervals, long, strength. Keep that
+  order in stacks and legends, and re-validate before changing a hex.
+*/
+:root {
+  color-scheme: light dark;
+
+  --page: #f3f2ee;
+  --surface: #fcfcfb;
+  --sunk: #eceae4;
+  --ink: #0b0b0b;
+  --ink2: #52514e;
+  --muted: #6b6a65;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --line: rgba(11, 11, 11, 0.1);
+  --btn: #0b0b0b;
+  --btn-ink: #fcfcfb;
+  --ctx: #c3c2b7;
+  --up: #006300;
+  --down: #b02a2a;
+
+  --cat-walkrun: #008300;
+  --cat-easy: #2a78d6;
+  --cat-tempo: #eb6834;
+  --cat-intervals: #1baf7a;
+  --cat-long: #eda100;
+  --cat-strength: #e87ba4;
+  --cat-swim: #4a3aa7;
+  --cat-cycle: #e34948;
+  --cat-walk: #c3c2b7;
+  --cat-other: #c3c2b7;
+
+  /* Sequential ramp, low to high. */
+  --seq-1: #cde2fb;
+  --seq-2: #86b6ef;
+  --seq-3: #3987e5;
+  --seq-4: #184f95;
+
+  /* Heart-rate zones 1 to 5, an ordinal ramp. */
+  --zone-1: #86b6ef;
+  --zone-2: #5598e7;
+  --zone-3: #2a78d6;
+  --zone-4: #1c5cab;
+  --zone-5: #104281;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --sunk: #262624;
+    --ink: #ffffff;
+    --ink2: #c3c2b7;
+    --muted: #9a988f;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --line: rgba(255, 255, 255, 0.1);
+    --btn: #ffffff;
+    --btn-ink: #0d0d0d;
+    --ctx: #52514e;
+    --up: #0ca30c;
+    --down: #f08080;
+
+    --cat-walkrun: #008300;
+    --cat-easy: #3987e5;
+    --cat-tempo: #d95926;
+    --cat-intervals: #199e70;
+    --cat-long: #c98500;
+    --cat-strength: #d55181;
+    --cat-swim: #9085e9;
+    --cat-cycle: #e66767;
+    --cat-walk: #52514e;
+    --cat-other: #52514e;
+
+    --seq-1: #104281;
+    --seq-2: #1c5cab;
+    --seq-3: #3987e5;
+    --seq-4: #9ec5f4;
+
+    --zone-1: #184f95;
+    --zone-2: #256abf;
+    --zone-3: #3987e5;
+    --zone-4: #6da7ec;
+    --zone-5: #b7d3f6;
+  }
+}
+
+@theme inline {
+  --font-sans: 'Barlow', 'Segoe UI', system-ui, sans-serif;
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-sunk: var(--sunk);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-muted: var(--muted);
+  --color-grid: var(--grid);
+  --color-axis: var(--axis);
+  --color-line: var(--line);
+  --color-btn: var(--btn);
+  --color-btn-ink: var(--btn-ink);
+  --color-ctx: var(--ctx);
+  --color-up: var(--up);
+  --color-down: var(--down);
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cat-easy);
+  outline-offset: 2px;
+}
+
+/* Numbers that line up in columns. Use on table cells and axis-like labels, not on big figures. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.maplibregl-map {
+  font-family: var(--font-sans);
+}
