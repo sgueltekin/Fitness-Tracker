@@ -114,3 +114,15 @@ export function workoutName(w: { title: string | null; sport: Sport; category: C
       return 'Workout'
   }
 }
+
+/**
+ * Some logging apps write a token energy value of a few kcal for a session of an hour or more.
+ * Below this rate the number is not a measurement and is treated as missing.
+ */
+export const MIN_KCAL_PER_MIN = 0.5
+
+/** Active energy of a workout, or null when it is missing or too low to be a measurement. */
+export function measuredEnergyKcal(energyKcal: number | null | undefined, durationS: number): number | null {
+  if (energyKcal == null || durationS <= 0) return null
+  return energyKcal / (durationS / 60) >= MIN_KCAL_PER_MIN ? energyKcal : null
+}

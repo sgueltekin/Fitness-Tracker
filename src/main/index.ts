@@ -14,6 +14,8 @@ interface ShotRequest {
   height?: number
   theme?: 'light' | 'dark'
   delay?: number
+  /** Date range to render instead of the stored one, e.g. 'all'. */
+  range?: string
 }
 const shot: ShotRequest | null = process.env.FD_SHOT ? JSON.parse(process.env.FD_SHOT) : null
 
@@ -51,7 +53,7 @@ function createWindow(): BrowserWindow {
   if (!app.isPackaged && process.env.ELECTRON_RENDERER_URL) {
     void win.loadURL(`${process.env.ELECTRON_RENDERER_URL}#${hash}`)
   } else {
-    void win.loadFile(join(__dirname, '../renderer/index.html'), { hash })
+    void win.loadFile(join(__dirname, '../renderer/index.html'), { hash, query: shot?.range ? { range: shot.range } : undefined })
   }
   return win
 }

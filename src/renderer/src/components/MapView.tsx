@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import * as maplibregl from 'maplibre-gl'
 // MapLibre only finds its worker on its own when served over http; in the packaged app we hand it the bundled file.
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
@@ -22,17 +22,21 @@ export interface MapMarker {
 
 maplibregl.setWorkerUrl(workerUrl)
 
+// One shared array, so a caller without markers does not trigger a redraw on every render.
+const NO_MARKERS: MapMarker[] = []
+
 const STYLE_LIGHT = 'https://tiles.openfreemap.org/styles/positron'
 const STYLE_DARK = 'https://tiles.openfreemap.org/styles/dark'
 
 /**
- * Map with route lines drawn on free OpenFreeMap tiles. Fits itself to the lines.
+ * Map with route lines drawn on free OpenFreeMap tiles. Fits itself to the lines, and again
+ * whenever their overall extent changes; restyling or highlighting lines keeps the user's pan and zoom.
  * Lines are drawn in array order, so put the ones that should sit on top last.
  * Without a network connection the tiles stay blank but the lines still draw.
  */
 export function MapView({
   lines,
-  markers = [],
+  markers = NO_MARKERS,
   height = 420,
   className = '',
   onLineClick
@@ -109,12 +113,17 @@ export function MapView({
     }
   }
 
-  function fit(m: maplibregl.Map, animate: boolean): void {
+  function extent(): maplibregl.LngLatBounds | null {
     const pts = latest.current.lines.flatMap((l) => l.coords)
-    if (pts.length === 0) return
+    if (pts.length === 0) return null
     const b = new maplibregl.LngLatBounds(pts[0], pts[0])
     for (const p of pts) b.extend(p)
-    m.fitBounds(b, { padding: 40, maxZoom: 16, animate })
+    return b
+  }
+
+  function fit(m: maplibregl.Map, animate: boolean): void {
+    const b = extent()
+    if (b) m.fitBounds(b, { padding: 40, maxZoom: 16, animate })
   }
 
   useEffect(() => {
@@ -153,10 +162,13 @@ export function MapView({
 
   useEffect(() => {
     const m = map.current
-    if (!m) return
-    if (m.isStyleLoaded()) draw(m)
-    fit(m, false)
+    if (m?.isStyleLoaded()) draw(m)
   }, [lines, markers])
+
+  const extentKey = useMemo(() => extent()?.toArray().flat().join(',') ?? '', [lines])
+  useEffect(() => {
+    if (map.current) fit(map.current, false)
+  }, [extentKey])
 
   return (
     <div

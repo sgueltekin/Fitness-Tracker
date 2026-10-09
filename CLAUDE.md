@@ -15,7 +15,7 @@ PowerShell `$env:Path = 'C:\Program Files\nodejs;' + $env:Path; …`, Bash `expo
 | `npm test` | Vitest (`tests/**/*.test.ts`) |
 | `npm run import -- "<export.zip>"` | Import an export into `data/fitness.db` without the UI |
 | `npm run query -- getOverview 12w` | Call one API method and print JSON |
-| `npm run shot -- running shots/running.png [--theme dark] [--out-dir out-x] [--delay 4000]` | Build, render one route in a real window parked off-desktop, save a full-page PNG. Route has no leading slash; `overview` is the start page. Renderer warnings and errors are printed. |
+| `npm run shot -- running shots/running.png [--theme dark] [--range all] [--width 760] [--out-dir out-x] [--delay 4000] [--no-build]` | Build, render one route in a real window parked off-desktop, save a full-page PNG. Route has no leading slash; `overview` is the start page, `activities/12` a workout. `--range` renders a date range without changing the stored one. Renderer warnings and errors are printed. |
 
 `FD_DB` overrides the database path; `FD_NOW=YYYY-MM-DD` pins "today".
 

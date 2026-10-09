@@ -107,13 +107,15 @@ export function barSeries(name: string, color: string, data: (number | null)[]):
 /**
  * Series for a line. Nulls break the line. The last non-null point gets a dot
  * with a surface-coloured ring; pass `endLabel` to print its value beside it.
+ * `symbols` draws a dot on every point (few, discrete points); `endDot: false` drops
+ * the emphasis on the last point for traces where the newest value is not special.
  */
 export function lineSeries(
   t: Tokens,
   name: string,
   color: string,
   data: (number | null)[],
-  opts: { endLabel?: string; area?: boolean; connectNulls?: boolean } = {}
+  opts: { endLabel?: string; area?: boolean; connectNulls?: boolean; symbols?: boolean; endDot?: boolean } = {}
 ): NonNullable<EChartsOption['series']> {
   let lastIdx = -1
   data.forEach((v, i) => {
@@ -124,7 +126,7 @@ export function lineSeries(
       name,
       type: 'line',
       data,
-      showSymbol: false,
+      showSymbol: opts.symbols ?? false,
       symbol: 'circle',
       symbolSize: 8,
       connectNulls: opts.connectNulls ?? false,
@@ -133,7 +135,7 @@ export function lineSeries(
       areaStyle: opts.area ? { color, opacity: 0.1 } : undefined,
       emphasis: { disabled: true },
       markPoint:
-        lastIdx >= 0
+        lastIdx >= 0 && opts.endDot !== false
           ? {
               symbol: 'circle',
               symbolSize: 10,

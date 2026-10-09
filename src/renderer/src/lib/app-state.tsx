@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { AppStatus, ImportProgress, ImportSummary } from '@shared/api/status'
-import type { RangeKey } from '@shared/dates'
+import { RANGE_OPTIONS, type RangeKey } from '@shared/dates'
 
 interface AppState {
   /** Date range shared by every page. */
@@ -21,10 +21,17 @@ const Ctx = createContext<AppState | null>(null)
 
 const RANGE_STORAGE_KEY = 'fd.range'
 
+function isRangeKey(v: string | null): v is RangeKey {
+  return RANGE_OPTIONS.some((o) => o.key === v)
+}
+
 function storedRange(): RangeKey {
+  // The screenshot script opens the window with ?range=<key> to render a range without storing it.
+  const forced = new URLSearchParams(window.location.search).get('range')
+  if (isRangeKey(forced)) return forced
   try {
     const v = localStorage.getItem(RANGE_STORAGE_KEY)
-    if (v === '4w' || v === '12w' || v === '6m' || v === '1y' || v === 'all') return v
+    if (isRangeKey(v)) return v
   } catch {
     // storage unavailable: fall through to the default
   }
